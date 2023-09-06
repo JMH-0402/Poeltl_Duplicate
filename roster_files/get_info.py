@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+
 # Eastern conference divisions
 atlantic_div = ['BOS', 'BRK', 'TOR', 'NYK', 'PHI']
 central_div = ['CLE', 'CHI', 'DET', 'IND', 'MIL']
