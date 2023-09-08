@@ -1,28 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-
-
-# Eastern conference divisions
-atlantic_div = ['BOS', 'BRK', 'TOR', 'NYK', 'PHI']
-central_div = ['CLE', 'CHI', 'DET', 'IND', 'MIL']
-south_east_div = ['ATL', 'CHO', 'MIA', 'ORL', 'WAS']
-
-# Western conference divisions
-north_west_div = ['DEN', 'MIN', 'POR', 'OKC', 'UTA']
-pacific_div = ['GSW', 'LAC', 'LAL', 'PHO', 'SAC']
-south_west_div = ['DAL', 'HOU', 'MEM', 'NOP', 'SAS']
-
-# all teams in one list.
-divisions = [atlantic_div, central_div, south_east_div, north_west_div,
-             pacific_div, south_west_div]
+import Constants
 
 # Url template for each team. Replace {} with the 3 letter team code.
 url_start = "https://www.basketball-reference.com/teams/{}/2024.html"
 
 # Loop to start accessing each teams page and writing new files into
 # rosters_info directory. Each team gets its own file.
-for division in divisions:
+for division in Constants.DIVISIONS:
     for team in division:
         url = url_start.format(team)
         data = requests.get(url)
@@ -31,7 +17,7 @@ for division in divisions:
 
 # Taking each team's roster table out from their respective html page
 rosters = []
-for division in divisions:
+for division in Constants.DIVISIONS:
     for team in division:
         with open("rosters_info/{}.html".format(team)) as f:
             page = f.read()
@@ -50,5 +36,23 @@ for roster in rosters:
         team = 0
     if div > 5:
         break
-    roster.to_csv("rosters_info/{}.csv".format(divisions[div][team]))
+    roster.to_csv("rosters_info/{}.csv".format(Constants.DIVISIONS[div][team]))
     team += 1
+
+# Creating a new csv file with only player names
+created = False
+for division in Constants.DIVISIONS:
+    for team in division:
+        if not created:
+            df = pd.read_csv('rosters_info/{}.csv'.format(team))
+            df = df[["Player"]]
+            df.to_csv('player_names.csv', index=False)
+            created = True
+        else:
+            df = pd.read_csv('rosters_info/{}.csv'.format(team))
+            df = df[["Player"]]
+            df.to_csv('player_names.csv', mode='a', index=False, header=False)
+
+
+
+
