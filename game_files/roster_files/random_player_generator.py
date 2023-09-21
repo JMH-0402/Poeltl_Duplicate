@@ -1,4 +1,6 @@
 # This file will generate random NBA players
+# Note: This file will not run on its own since it will be used as purely a
+# client of game.py.
 import Constants
 import random
 import csv
@@ -12,7 +14,7 @@ def PlayerGenerator() -> list:
     :return: The NBA player
     """
     player = []
-    with open('player_names.csv', 'r') as file_obj:
+    with open('roster_files/player_names.csv', 'r') as file_obj:
 
         reader_obj = csv.DictReader(file_obj)
 
@@ -25,7 +27,8 @@ def PlayerGenerator() -> list:
 
     for division in Constants.DIVISIONS:
         for team in division:
-            with open('rosters_info/{}.csv'.format(team), 'r') as file_obj:
+            with open('roster_files/rosters_info/{}.csv'.format(team),
+                      'r') as file_obj:
                 reader_obj = csv.DictReader(file_obj)
 
                 for row in reader_obj:
@@ -46,7 +49,8 @@ def PlayerFinder(player_name: str) -> list:
     player = [player_name]
     for division in Constants.DIVISIONS:
         for team in division:
-            with open('rosters_info/{}.csv'.format(team), 'r') as file_obj:
+            with open('roster_files/rosters_info/{}.csv'.format(team),
+                      'r') as file_obj:
                 reader_obj = csv.DictReader(file_obj)
 
                 for row in reader_obj:
@@ -54,10 +58,9 @@ def PlayerFinder(player_name: str) -> list:
                         player.append(row["Pos"])
                         player.append(row["Ht"])
                         player.append(row["Wt"])
-
-    print(player)
     return player
 
 
 if __name__ == '__main__':
-    PlayerFinder("Jeff Green")
+    PlayerGenerator()
+    PlayerFinder("Bennedict Mathurin")

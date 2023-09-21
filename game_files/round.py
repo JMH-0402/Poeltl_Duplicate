@@ -1,5 +1,5 @@
 # This will be the class containing the rounds of each game
-from roster_files.random_player_generator import *
+from game_files.roster_files.random_player_generator import *
 
 Num_of_players = 538
 
@@ -44,7 +44,7 @@ class Round:
         guess_player = PlayerFinder(guess)
         if guess_player[2] == self.correct_player[2]:
             return "correct"
-        elif abs(int(guess_player[2][2])-int(self.correct_player[2][2])) < 3:
+        elif abs(int(guess_player[2][2]) - int(self.correct_player[2][2])) < 3:
             return "close"
         else:
             return "incorrect"
@@ -61,11 +61,41 @@ class Round:
         guess_player = PlayerFinder(guess)
         if guess_player[1] == self.correct_player[1]:
             return "correct"
-        elif len(guess_player[1]) > 1:
+        elif len(guess_player[1]) > 1 and len(self.correct_player[1]) == 1:
+            if self.correct_player[1] == guess_player[1][0]:
+                return "close"
+            return "incorrect"
+        elif len(self.correct_player[1]) > 1 and len(guess_player[1]) == 1:
+            if self.correct_player[1][0] == guess_player[1]:
+                return "close"
+            elif self.correct_player[1][2] == guess_player[1]:
+                return "close"
+            return "incorrect"
+        elif len(guess_player[1]) > 1 and len(self.correct_player[1]) > 1:
+            if self.correct_player[1][0] == guess_player[1][0] or \
+                    self.correct_player[1][2] == guess_player[1][0] or \
+                    self.correct_player[1][0] == guess_player[1][2] or \
+                    self.correct_player[1][2] == guess_player[1][2]:
+                return "close"
+        return "incorrect"
 
+    def weight_guess(self, guess: str) -> str:
+        """
+        Returns "correct" if the weight of the guessed player is the same as the
+        correct_player. Returns "close" if the weight of the guessed player is
+        plus or minus 10 pounds of the correct_player. Returns "incorrect" if
+        the weight is off by more than 10 pounds.
+        :param guess: the name of the player
+        """
+        guess_player = PlayerFinder(guess)
+        guess_weight = int(guess_player[3])
+        correct_weight = int(self.correct_player[3])
+        if guess_weight == correct_weight:
+            return "correct"
+        elif abs(guess_weight - correct_weight) <= 10:
+            return "close"
+        return "incorrect"
 
 
 if __name__ == '__main__':
     player = Round()
-
-
